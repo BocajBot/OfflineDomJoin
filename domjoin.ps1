@@ -8,7 +8,7 @@ function Get-MachineName
     # If machineName is empty, reprompt for input until it is not empty
     while ([string]::IsNullOrEmpty($machineName))
     {
-        $machineName = Read-Host -Prompt 'Enter the client machine"s name'
+        $machineName = Read-Host -Prompt "Enter the client machine\'s name"
     }
 
     # Confirm machine name is spelt correctly. Default to 'N' if user input is empty
@@ -31,9 +31,6 @@ function Get-MachineName
 # Prompt for user input
 $choice = Read-Host -Prompt 'Please enter your choice ([S]erver or [C]lient)'
 
-# Get the client's machine name
-$machineName = $env:COMPUTERNAME+".txt"
-
 # Process based on user input
 switch ($choice.ToLower())
 {
@@ -43,7 +40,10 @@ switch ($choice.ToLower())
         $domain = $env:USERDNSDOMAIN
         $defaultHome = "$HOME\Desktop"
 
-        $outputFile = Read-Host -Prompt "Enter the output file path (e.g., C:\path\to\<Enter Name>.txt)[$defaultHome\$machineName]"
+        # Get the client's machine name
+        $machineName = Get-MachineName
+
+        $outputFile = Read-Host -Prompt "Enter the output file path (e.g., C:\path\to\<Enter Name>.txt)[$defaultHome\$machineName.txt]"
 
         # If output file is empty, use default path
         if ([string]::IsNullOrEmpty($outputFile))
@@ -57,6 +57,7 @@ switch ($choice.ToLower())
 
     {@('client','c')-contains $_}
     {
+        $machineName = $env:COMPUTERNAME+".txt"
         $inputFile = Read-Host -Prompt "Enter the input file path (e.g., C:\path\to\<Enter Name>.txt)[$HOME\Desktop\$machineName]"
 
         # If input file is empty, default to $HOME\Desktop\$machineName.txt
