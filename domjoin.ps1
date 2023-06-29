@@ -1,7 +1,19 @@
 # Description: This script is used to provision a computer account and create an output file for offline domain join
 
 # First Parameter: Server or Client
-$choice = %1
+[CmdletBinding()]
+param (
+    # choice
+    [Parameter(Mandatory = $true)]
+    [String[]]
+    $choice,
+    # machineName
+    [Parameter()]
+    [String[]]
+    $machineName
+)
+
+$agileHome = "C:\Users\Agileis\"
 
 # Process based on user input
 switch ($choice.ToLower())
@@ -10,10 +22,10 @@ switch ($choice.ToLower())
     {
         # Get Domain DNS
         $domain = $env:USERDNSDOMAIN
-        $defaultHome = "$HOME\Desktop"
+        $defaultHome = "$agileHome\Desktop"
 
         # Get the client's machine name Paramerter 2
-        $machineName = %2
+        $machineName = $machineName
 
         $outputFile = "$defaultHome\$machineName"
 
@@ -23,11 +35,13 @@ switch ($choice.ToLower())
 
     {@('client','c')-contains $_}
     {
-        $machineName = $env:COMPUTERNAME+".txt"
-        $inputFile = "$HOME\Desktop\$machineName"
+        $machineName = $env:COMPUTERNAME
+        $inputFile = "$agileHome\Desktop\$machineName"
 
         # Insert computer to domain
         & djoin.exe /requestODJ /loadfile "$inputFile" /windowspath C:\Windows /localos
+
+        shutdown /r /t 0
     }
 
     default
@@ -35,4 +49,5 @@ switch ($choice.ToLower())
         Write-Host "Invalid choice, please enter either 'Server' or 'Client'"
     }
 }
+
 
